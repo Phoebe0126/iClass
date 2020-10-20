@@ -15,7 +15,6 @@
 </template>
 
 <script>
-// import HeadTop from '@/components/header/Head'
 import Cookies from 'js-cookie'
 import { wxAuth } from '../../api/login'
 
@@ -28,7 +27,7 @@ export default {
     },
     methods: {
         getAuth () {
-            // todo 获取用户授权获取code、openid等信息
+
             const code = Cookies.get('iclass_code') || ''
             if (code) {
                 // 直接进入首页
@@ -83,7 +82,9 @@ export default {
         div {
             color: #414141;
             margin-top: .3rem;
-            font-size: .22rem;
+            font-size: .25rem;
+            font-weight: bold;
+            letter-spacing: .1rem;
         }
     }
     .auth {

@@ -44,6 +44,7 @@ export default {
         height: 5rem;
         border: 1px solid #aaa;
         margin: 1rem auto;
+        margin-bottom: .2rem;
         img {
             @include wh(100%, 100%);
         }
