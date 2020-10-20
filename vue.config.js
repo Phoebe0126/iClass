@@ -4,7 +4,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://test.m.naoffer.com',
+                target: 'http://test.m.naoffer.com/iclass',
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {

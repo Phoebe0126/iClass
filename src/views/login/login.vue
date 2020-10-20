@@ -16,6 +16,8 @@
 
 <script>
 // import HeadTop from '@/components/header/Head'
+import Cookies from 'js-cookie'
+import { wxAuth } from '../../api/login'
 
 export default {
     name: "login",
@@ -27,14 +29,28 @@ export default {
     methods: {
         getAuth () {
             // todo 获取用户授权获取code、openid等信息
-            // 1.needbind
-            const res = 'needbind';
-            if (res === 'needbind') {
-                this.$router.push('/bindMobile')
-            } else {
+            const code = Cookies.get('iclass_code') || ''
+            if (code) {
                 // 直接进入首页
                 this.$router.push('/')
+                return
             }
+            wxAuth({code}).then(res => {
+                // console.log(res)
+                // 1.needbind
+                const msg = res.data.msg;
+                if (msg === 'need bind') {
+                    this.$router.push('/bindMobile')
+                } else {
+                    // 直接进入首页
+                    this.$router.push('/')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                this.$router.push('/bindMobile')
+            })
+           
         },
         goBackDo() {
             window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/');
@@ -46,45 +62,42 @@ export default {
 
 </script>
 
-    <style lang="scss" scoped>
-
-    #wrapper{
-        background-color: #fff;
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        text-align: center;
-        .nav-left {
-            margin-left: .2rem;
+<style lang="scss" scoped>
+#wrapper{
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    text-align: center;
+    .nav-left {
+        margin-left: .2rem;
+        margin-top: .3rem;
+        height: 1rem;
+        width: 1rem;
+        font-size: .5rem;
+        color: #8a8a8a;
+    }
+    .product-intro {
+        padding: 2rem 1rem;
+        color: #3c3c3c;
+        div {
+            color: #414141;
             margin-top: .3rem;
-            height: 1rem;
-            width: 1rem;
-            font-size: .5rem;
-            color: #8a8a8a;
-        }
-        .product-intro {
-            padding: 2rem 1rem;
-            color: #3c3c3c;
-            div {
-                color: #414141;
-                margin-top: .3rem;
-                font-size: .22rem;
-            }
-        }
-        .auth {
-            padding: 1rem;
-            .van-button__text {
-                color: #fff;
-            }
-            .user-manual {
-                width: 1.5rem;
-                color: #ababab;
-                font-size: .3rem;
-                margin: .5rem auto;
-                border-bottom: 1px solid #aaa;
-            }
+            font-size: .22rem;
         }
     }
-    
-
+    .auth {
+        padding: 1rem;
+        .van-button__text {
+            color: #fff;
+        }
+        .user-manual {
+            width: 1.5rem;
+            color: #ababab;
+            font-size: .3rem;
+            margin: .5rem auto;
+            border-bottom: 1px solid #aaa;
+        }
+    }
+}
 </style>
