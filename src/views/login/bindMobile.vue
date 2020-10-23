@@ -26,7 +26,7 @@
                                 >
                                 </van-field>
                             </div>
-                            <div class="verify-text-img block block-right">
+                            <div class="verify-text-img block-right">
                                 哈工大
                             </div>
                         </div>
@@ -40,8 +40,9 @@
                                  <!-- :rules="[{ required: true, message: '请填写验证码' }]" -->
                                 </van-field>
                             </div>
-                            <div @click="getVerifyCode" class="block block-right verify-code-right">
-                                <van-button round>获取验证码</van-button>
+                            <div class="block-right verify-code-right">
+                                <van-button round v-show="!showCountDown"  @click="getVerifyCode" >获取验证码</van-button>
+                                <van-button round  size="normal" v-show="showCountDown">{{ count }}</van-button>
                             </div>
                         </div>
                         <div class="submit">
@@ -69,7 +70,10 @@ export default {
         return{
             mobile:'',
             verifyText: '',
-            verifyCode: ''
+            verifyCode: '',
+            showCountDown: false,
+            timer: null,
+            count: 0
         }
     },
     components:{
@@ -83,16 +87,44 @@ export default {
             // 2. 验证成功则跳转到首页
             // this.$router.push('/')
         },
+        // 表单校验失败
+        formValidateFailed (errorInfo) {
+            this.$toast(errorInfo.errors[0].message)
+        },
         getVerifyCode () {
             // 1.验证文字验证码是否正确
             // 2.请求后台验证码接口
+            // 3.60秒倒计时
+            this.countdown()
+            // 4.清空文字验证码并且更换验证码图片
+            this.resetVerifyText()
+
+        },
+        resetVerifyText () {
+            if (this.verifyText) {
+                this.verifyText = ''
+            }
         },
         naviToMobileChangePage () {
             this.$router.push('/changeMobile')
         },
-        // 表单校验失败
-        formValidateFailed (errorInfo) {
-            this.$toast(errorInfo.errors[0].message)
+        // 验证码倒计时
+        countdown () {
+            const MAX_COUNT = 60
+            if (!this.timer) {
+                this.count = MAX_COUNT
+                this.showCountDown = true
+                this.timer = setInterval(() => {
+                    if (this.count > 0 && this.count <= MAX_COUNT) {
+                        this.count--
+                    } else {
+                        clearInterval(this.timer)
+                        this.count = 0
+                        this.timer = null
+                        this.showCountDown = false
+                    }
+                }, 1000);
+            }
         }
     }
 }
@@ -132,7 +164,7 @@ export default {
                 .area-code {
                     border-right: 1px solid #c1c1c1;
                     padding: 0 .2rem;
-                   color: #000;
+                    color: #000;
                     line-height: .4rem;
                     font-size: .4rem;
                 }
@@ -141,17 +173,18 @@ export default {
                 @include flex(space-between, stretch);
                 overflow: hidden;
                 .block {
-                    width: 55%;
+                    flex: 1;
                 }
                 .block-right {
                     margin-left: .4rem;
                     text-align: center;
                     @include flex(center);
-                    flex: 1;
+                    width: 35%;
                 }
                 .verify-code-right {
                     border: 0;
                     .van-button {
+                        width: 100%;
                         border: .04rem solid $oy;
                         background-color: #fff;
                         .van-button__text {

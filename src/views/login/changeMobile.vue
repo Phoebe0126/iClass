@@ -15,9 +15,9 @@
                                 placeholder="输入手机号"
                                 show-error="false"
                                 show-error-message="false"
-                                :rules="[{ required: true, message: '请填写手机号' }]"
+                                :rules="[{ required: true, message: '请填写手机号' },
+                                { pattern: /^1[3456789]\d{9}$/, message: '手机号码格式错误！'}]"
                             />
-                          
                     </div>
                     <div class="submit">
                         <van-button block type="info" native-type="submit" color="#f49d3e">
